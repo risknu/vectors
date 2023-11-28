@@ -7,7 +7,12 @@ cpp_library = ctypes.CDLL('rivector/lib/vectors.so')
 cpp_library.Vector2_new.argtypes = [ctypes.c_float, ctypes.c_float]
 cpp_library.Vector2_new.restype = ctypes.POINTER(ctypes.c_void_p)
 
+cpp_library.Vector2_set.restype = None
+cpp_library.Vector2_set.argtypes = [ctypes.c_void_p, ctypes.c_float, ctypes.c_float]
+
 cpp_library.Vector2_to_list.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_sqrmagnitude.restype = ctypes.c_float
 
 cpp_library.Vector2_magnitude.restype = ctypes.c_float
 
@@ -20,6 +25,31 @@ cpp_library.Vector2_angle.restype = ctypes.c_float
 cpp_library.Vector2_get_x.restype = ctypes.c_float
 cpp_library.Vector2_get_y.restype = ctypes.c_float
 
+cpp_library.Vector2_equals.restype = ctypes.c_bool
+
+cpp_library.Vector2_get_y.restype = ctypes.c_float
+
+cpp_library.Vector2_clamp_magnitude.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_distance.restype = ctypes.c_float
+
+cpp_library.Vector2_lerp_unclamped.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_max.restype = ctypes.POINTER(ctypes.c_float * 2)
+cpp_library.Vector2_min.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_perpendicular.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_move_towards.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_reflect.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_scale.restype = ctypes.POINTER(ctypes.c_float * 2)
+
+cpp_library.Vector2_signed_angle.restype = ctypes.c_float
+
+cpp_library.Vector2_smooth_damp.restype = ctypes.POINTER(ctypes.c_float * 2)
+
 
 class Vector2Wrapper(ctypes.Structure):
     _fields_ = [("x", ctypes.c_float), ("y", ctypes.c_float)]
@@ -27,10 +57,17 @@ class Vector2Wrapper(ctypes.Structure):
     def __init__(self, x: float = 0.0, y: float = 0.0):
         self.object = cpp_library.Vector2_new(x, y)
 
+    def set(self, x: float = 0.0, y: float = 0.0) -> None:
+        cpp_library.Vector2_set(self.object, x, y)
+
     def to_list(self) -> list:
         c_float_array_pointer = cpp_library.Vector2_to_list(self.object)
         float_array = list(c_float_array_pointer.contents)
         return float_array
+    
+    def sqrMagnitude(self) -> float:
+        sqrmagnitude_float = cpp_library.Vector2_sqrmagnitude(self.object)
+        return sqrmagnitude_float
     
     def magnitude(self) -> float:
         magnitude_float = cpp_library.Vector2_magnitude(self.object)
@@ -52,6 +89,45 @@ class Vector2Wrapper(ctypes.Structure):
             return
         c_float_pointer = cpp_library.Vector2_angle(self.object, a.object, b.object)
         return c_float_pointer
+    
+    def equals(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> bool:
+        if a is None or b is None:
+            return
+        c_pointer = cpp_library.Vector2_equals(self.object, a.object, b.object)
+        return c_pointer
+    
+    def clamp_magnitude(self, max_length: float = 0.0) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_clamp_magnitude(self.object, max_length)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def distance(self, b: Vector2Wrapper = None) -> float:
+        if b is None:
+            return
+        c_pointer = cpp_library.Vector2_distance(self.object, b.object)
+        return c_pointer
+    
+    def lerp_unclamped(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, t: float = 0.0) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_lerp_unclamped(self.object, a.object, b.object, t)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def max(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_max(self.object, a.object, b.object)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def min(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_min(self.object, a.object, b.object)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def perpendicular(self, a: Vector2Wrapper = None) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_perpendicular(self.object, a.object)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    # TODO: Move towards
     
     @property
     def x_coord(self) -> float:
@@ -86,6 +162,9 @@ class Vector2Wrapper(ctypes.Structure):
     @property
     def right(self) -> Vector2Wrapper:
         return Vector2Wrapper(1, 0)
+    
+    def __repr__(self) -> str:
+        return f'<Vector2 ({self.x_coord}, {self.y_coord})>'
 
     def __del__(self) -> None:
         cpp_library.Vector2_free(self.object)
