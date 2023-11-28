@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from rivector.wrapper import Vector2Wrapper
-from rivector.abstract import VectorAbstractClass
 
 
 class Vector2(Vector2Wrapper):
