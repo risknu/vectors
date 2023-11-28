@@ -127,7 +127,29 @@ class Vector2Wrapper(ctypes.Structure):
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
-    # TODO: Move towards
+    def move_towards(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, max_distance_delta: float = 0.0) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_move_towards(self.object, a.object, b.object, max_distance_delta)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+
+    def reflect(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_reflect(self.object, a.object, b.object)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def scale(self, a: Vector2Wrapper = None, scale: float = 0.0) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, scale)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
+    
+    def signed_angle(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> float:
+        c_pointer = cpp_library.Vector2_signed_angle(self.object, b.object)
+        return c_pointer
+    
+    def smooth_damp(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, c: Vector2Wrapper = None, smooth_time: float = 0.0, max_speed: float = 0.0, delta_time: float = 0.0) -> Vector2Wrapper:
+        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, b.object, c.object, smooth_time, max_speed, delta_time)
+        float_array = list(c_float_array_pointer.contents)
+        return Vector2Wrapper(float_array[0], float_array[1])
     
     @property
     def x_coord(self) -> float:
