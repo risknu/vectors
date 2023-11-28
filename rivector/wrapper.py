@@ -1,7 +1,8 @@
 from __future__ import annotations
+
 import ctypes
 
-cpp_library = ctypes.CDLL('./example.so')
+cpp_library = ctypes.CDLL('rivector/lib/vectors.so')
 
 cpp_library.Vector2_new.argtypes = [ctypes.c_float, ctypes.c_float]
 cpp_library.Vector2_new.restype = ctypes.POINTER(ctypes.c_void_p)
@@ -19,7 +20,8 @@ cpp_library.Vector2_angle.restype = ctypes.c_float
 cpp_library.Vector2_get_x.restype = ctypes.c_float
 cpp_library.Vector2_get_y.restype = ctypes.c_float
 
-class Vector2(ctypes.Structure):
+
+class Vector2Wrapper(ctypes.Structure):
     _fields_ = [("x", ctypes.c_float), ("y", ctypes.c_float)]
 
     def __init__(self, x: float = 0.0, y: float = 0.0):
@@ -34,18 +36,18 @@ class Vector2(ctypes.Structure):
         magnitude_float = cpp_library.Vector2_magnitude(self.object)
         return magnitude_float
 
-    def normalized(self) -> Vector2:
+    def normalized(self) -> Vector2Wrapper:
         c_float_array_pointer = cpp_library.Vector2_normalized(self.object)
         float_array = list(c_float_array_pointer.contents)
-        return Vector2(float_array[0], float_array[1])
+        return Vector2Wrapper(float_array[0], float_array[1])
     
-    def dot(self, a: Vector2 = None, b: Vector2 = None) -> float:
+    def dot(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> float:
         if a is None or b is None:
             return
         c_float_pointer = cpp_library.Vector2_dot(self.object, a.object, b.object)
         return c_float_pointer
     
-    def angle(self, a: Vector2 = None, b: Vector2 = None) -> float:
+    def angle(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> float:
         if a is None or b is None:
             return
         c_float_pointer = cpp_library.Vector2_angle(self.object, a.object, b.object)
@@ -62,31 +64,28 @@ class Vector2(ctypes.Structure):
         return y_float
     
     @property
-    def one(self) -> Vector2:
-        return Vector2(1, 1)
+    def one(self) -> Vector2Wrapper:
+        return Vector2Wrapper(1, 1)
     
     @property
-    def zero(self) -> Vector2:
-        return Vector2(0, 0)
+    def zero(self) -> Vector2Wrapper:
+        return Vector2Wrapper(0, 0)
     
     @property
-    def down(self) -> Vector2:
-        return Vector2(0, -1)
+    def down(self) -> Vector2Wrapper:
+        return Vector2Wrapper(0, -1)
     
     @property
-    def up(self) -> Vector2:
-        return Vector2(0, 1)
+    def up(self) -> Vector2Wrapper:
+        return Vector2Wrapper(0, 1)
     
     @property
-    def left(self) -> Vector2:
-        return Vector2(-1, 0)
+    def left(self) -> Vector2Wrapper:
+        return Vector2Wrapper(-1, 0)
     
     @property
-    def right(self) -> Vector2:
-        return Vector2(1, 0)
+    def right(self) -> Vector2Wrapper:
+        return Vector2Wrapper(1, 0)
 
     def __del__(self) -> None:
         cpp_library.Vector2_free(self.object)
-
-    def __repr__(self) -> str:
-        return f'<Vector2 ({self.x_coord}, {self.y_coord})>'

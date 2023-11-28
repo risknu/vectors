@@ -1,6 +1,7 @@
-from rivector.wrapper import Vector2
+from __future__ import annotations
 
-if __name__ == "__main__":
-    va = Vector2(10, 13)
-    print(va.up)
-    del va
+from rivector import Vector2
+
+if __name__ == '__main__':
+    vector1 = Vector2(10, 10)
+    print(vector1)
