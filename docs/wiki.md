@@ -42,14 +42,13 @@ vector.clamp_magnitude(max_length: float)
 
 $$
 \begin{align*}
-& magnitude = \sqrt{x^{2}+y^{2}} \\
-& if\: magnitude\: >\: max\_length \\
-& factor = \frac{max\_length}{magnitude} \\
-& x = x*factor \\
-& y = y*factor
+    \text{magnitude} &= \sqrt{x^2 + y^2} \\
+    \text{if } \text{magnitude} &> \text{maxlength} \\
+    \text{factor} &= \frac{\text{maxlength}}{\text{magnitude}} \\
+    x &= x \times \text{factor} \\
+    y &= y \times \text{factor}
 \end{align*}
 $$
-
 
 ## `distance` Method
 ```python
@@ -75,13 +74,10 @@ vector.lerp_unclamped(a: Vector2, b: Vector2, t: float)
     - `t`: Interpolation factor (0.0 to 1.0).
 - *Returns:* A dynamically allocated array representing the interpolated vector.
 
-$$
-\begin{align*}
-& x = a.x\_coord + (b.x\_coord-a.x\_coord)*t \\
-& y = a.y\_coord + (b.y\_coord-a.y\_coord)*t
-\end{align*}
-$$
-
+$$ \begin{align*} 
+    x &= a.x\_coord + (b.x\_coord - a.x\_coord) \cdot t \\
+    y &= a.y\_coord + (b.y\_coord - a.y\_coord) \cdot t 
+\end{align*} $$
 
 ## `max` Method
 ```python
@@ -169,12 +165,10 @@ vector.signed_angle(a: Vector2, b: Vector2)
     - `b`: Ending Vector2.
 - *Returns:* The signed angle in degrees between the two vectors.
 
-$$
-\begin{align*}
-& angle = arctan2(b*a,a*b) \\
-& signed\_angle = angle
-\end{align*}
-$$
+$$ \begin{align*} 
+    \text{angle} &= \arctan2(ba, ab) \\
+    \text{signedangle} &= \text{angle}
+\end{align*} $$
 
 ## `smooth_damp` Method
 ```python
@@ -259,11 +253,10 @@ vector.dot(a: Vector2, b: Vector2)
     - `b`: Second Vector2.
 - *Returns:* The dot product of the two vectors.
 
-$$
-\begin{align*}
-& dot = a.x\_coord*b.x\_coord+a.y\_coord*b.y\_coord
-\end{align*}
-$$
+$$ \begin{align*} 
+    \text{dot} &= a.x\_coord \cdot b.x\_coord + a.y\_coord \cdot b.y\_coord 
+\end{align*} $$
+
 
 ## `angle` Method
 ```python
@@ -274,11 +267,10 @@ vector.angle(a: Vector2, b: Vector2)
     - `b`: Second Vector2.
 - *Returns:* The angle in radians between the two vectors.
 
-$$
-\begin{align*}
-& angle = arccos(\frac{a*b}{magnitude(a)*magnitude(b)})
-\end{align*}
-$$
+$$ \begin{align*} 
+    \text{angle} &= \arccos\left(\frac{a \cdot b}{\|a\| \cdot \|b\|}\right)
+\end{align*} $$
+
 
 ## Getter methods
 ```python
