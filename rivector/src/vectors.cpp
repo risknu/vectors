@@ -26,8 +26,8 @@ float* Vector2::clamp_magnitude(float max_length) const {
         return float_array;
     }
     float* float_array = new float[2];
-    float_array[0] = x/mag;
-    float_array[1] = y/mag;
+    float_array[0] = x/mag*max_length;
+    float_array[1] = y/mag*max_length;
     return float_array;
 }
 
@@ -76,10 +76,14 @@ float* Vector2::move_towards(Vector2& a, Vector2& b, float max_distance_delta) c
     double x_degree = std::pow(to_vector[0], 2);
     double y_degree = std::pow(to_vector[1], 2);
     float distance = std::sqrt(static_cast<float>(x_degree + y_degree));
+
     if (distance <= max_distance_delta || distance == 0) {
+        // If the distance is less than or equal to max_distance_delta, or distance is 0, return the target vector b
         float* float_array = new float[2]{ b.x, b.y };
         return float_array;
     }
+
+    // Move towards the target vector by at most max_distance_delta
     float* float_array = new float[2]{ a.x + to_vector[0] / distance * max_distance_delta, a.y + to_vector[1] / distance * max_distance_delta };
     return float_array;
 }
@@ -103,9 +107,18 @@ float* Vector2::scale(Vector2& a, float scale) const {
 
 // Gets the signed angle in degrees between from and to
 float Vector2::signed_angle(Vector2& a, Vector2& b) const {
-    float angle = std::atan2(b.y, b.x) - std::atan2(a.y, a.x);
-    angle = std::fmod((angle + M_PI), (2 * M_PI)) - M_PI;
-    return angle * (180 / M_PI);
+    // Check for zero vectors
+        if (a.x == 0 && a.y == 0) return 0.0f;
+        if (b.x == 0 && b.y == 0) return 0.0f;
+
+        // Calculate angle
+        float angle = std::atan2(b.y, b.x) - std::atan2(a.y, a.x);
+
+        // Normalize angle to the range [-pi, pi]
+        angle = std::fmod((angle + M_PI), (2 * M_PI)) - M_PI;
+
+        // Convert to degrees
+        return angle * (180.0f / M_PI);
 }
 
 // Gets the signed angle in degrees between from and to

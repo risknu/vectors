@@ -1,8 +1,4 @@
-from __future__ import annotations
-
-from rivector import Vector2
-
-if __name__ == '__main__':
-    vector1 = Vector2(10, -6)
-    vector2 = Vector2(11, 10)
-    print(vector1>vector2)
+from rivector.vector2 import Vector2
+vector = Vector2(36, 17)
+vector1 = Vector2(221, 24)
+print(Vector2.angle(vector, vector1))

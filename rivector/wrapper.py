@@ -108,7 +108,7 @@ class Vector2Wrapper(ctypes.Structure):
         return c_pointer
     
     def clamp_magnitude(self, max_length: float = 0.0) -> Vector2Wrapper:
-        c_float_array_pointer = cpp_library.Vector2_clamp_magnitude(self.object, max_length)
+        c_float_array_pointer = cpp_library.Vector2_clamp_magnitude(self.object, ctypes.c_float(max_length))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
@@ -123,7 +123,7 @@ class Vector2Wrapper(ctypes.Structure):
         if a is None or b is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `lerp_unclamped` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_lerp_unclamped(self.object, a.object, b.object, t)
+        c_float_array_pointer = cpp_library.Vector2_lerp_unclamped(self.object, a.object, b.object, ctypes.c_float(t))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
@@ -157,7 +157,7 @@ class Vector2Wrapper(ctypes.Structure):
         if a is None or b is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `move_towards` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_move_towards(self.object, a.object, b.object, max_distance_delta)
+        c_float_array_pointer = cpp_library.Vector2_move_towards(self.object, a.object, b.object, ctypes.c_float(max_distance_delta))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
 
@@ -173,24 +173,17 @@ class Vector2Wrapper(ctypes.Structure):
         if a is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `scale` function, the arguments `a: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, scale)
+        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, ctypes.c_float(scale))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
-    def signed_angle(self, b: Vector2Wrapper = None) -> float:
-        if b is None:
+    def signed_angle(self, b: Vector2Wrapper = None, a: Vector2Wrapper = None) -> float:
+        if b is None or a is None:
             raise MethodArgumentationError(
-                'It looks like you did not specify the arguments in the `signed_angle` function, the arguments `b: Vector2Wrapper`, check your code')
-        c_pointer = cpp_library.Vector2_signed_angle(self.object, b.object)
+                'It looks like you did not specify the arguments in the `signed_angle` function, the arguments `b: Vector2Wrapper, a: Vector2Wrapper`, check your code')
+        c_pointer = cpp_library.Vector2_signed_angle(self.object, b.object, a.object)
+        print(c_pointer)
         return c_pointer
-    
-    def smooth_damp(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, c: Vector2Wrapper = None, smooth_time: float = 0.0, max_speed: float = 0.0, delta_time: float = 0.0) -> Vector2Wrapper:
-        if a is None or b is None or c is None:
-            raise MethodArgumentationError(
-                'It looks like you did not specify the arguments in the `smooth_damp` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper, c: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, b.object, c.object, smooth_time, max_speed, delta_time)
-        float_array = list(c_float_array_pointer.contents)
-        return Vector2Wrapper(float_array[0], float_array[1])
     
     @property
     def x_coord(self) -> float:
@@ -243,6 +236,8 @@ class Vector2Wrapper(ctypes.Structure):
     
     def __truediv__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
         if isinstance(a, (int, float)):
+            if a == 0:
+                raise ZeroDivisionError('zero division error')
             self.set(self.x_coord/a, self.y_coord/a)
             return Vector2Wrapper(self.x_coord, self.y_coord)
         elif isinstance(a, Vector2Wrapper):
