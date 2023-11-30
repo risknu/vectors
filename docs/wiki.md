@@ -40,6 +40,17 @@ vector.clamp_magnitude(max_length: float)
     - `max_length`: The maximum length for the vector.
 - *Returns:* A dynamically allocated array representing the clamped vector.
 
+$$
+\begin{align*}
+& magnitude = \sqrt{x^{2}+y^{2}} \\
+& if\: magnitude\: >\: max\_length \\
+& factor = \frac{max\_length}{magnitude} \\
+& x = x*factor \\
+& y = y*factor
+\end{align*}
+$$
+
+
 ## `distance` Method
 ```python
 vector.distance(b: Vector2)
@@ -47,6 +58,12 @@ vector.distance(b: Vector2)
 - *Parameters:*
     - `b`: Another Vector2 object.
 - *Returns:* The distance between the two vectors.
+
+$$
+\begin{align*}
+& \sqrt{(x-b.x\_coord)^{2}+(y-b.y\_coord)^{2}}
+\end{align*}
+$$
 
 ## `lerp_unclamped` Method
 ```python
@@ -57,6 +74,14 @@ vector.lerp_unclamped(a: Vector2, b: Vector2, t: float)
     - `b`: Ending Vector2.
     - `t`: Interpolation factor (0.0 to 1.0).
 - *Returns:* A dynamically allocated array representing the interpolated vector.
+
+$$
+\begin{align*}
+& x = a.x\_coord + (b.x\_coord-a.x\_coord)*t \\
+& y = a.y\_coord + (b.y\_coord-a.y\_coord)*t
+\end{align*}
+$$
+
 
 ## `max` Method
 ```python
@@ -94,6 +119,14 @@ vector.move_towards(a: Vector2, b: Vector2, max_distance_delta: float)
     - `max_distance_delta`: Maximum distance to move towards the target.
 - *Returns:* A dynamically allocated array representing the new position.
 
+$$
+\begin{align*}
+& direction = (b - a).normalize() \\
+& x = a.x\_coord + direction.x * max\_distancec\_delta \\
+& y = a.y\_coord + direction.y * max\_distancec\_delta
+\end{align*}
+$$
+
 ## `reflect` Method
 ```python
 vector.reflect(a: Vector2, b: Vector2)
@@ -102,6 +135,14 @@ vector.reflect(a: Vector2, b: Vector2)
     - `a`: Incident vector.
     - `b`: Normal vector.
 - *Returns:* A dynamically allocated array representing the reflected vector.
+
+$$
+\begin{align*}
+& parallel = (a * b) * b \\
+& x = 2 * parallel.x - a.x\_coord \\
+& y = 2 * parallel.y - a.y\_coord \\
+\end{align*}
+$$
 
 ## `scale` Method
 ```python
@@ -112,6 +153,13 @@ vector.scale(a: Vector2, scale: float)
     - `scale`: The scaling factor.
 - *Returns:* A dynamically allocated array representing the scaled vector.
 
+$$
+\begin{align*}
+& x = a.x\_coord * scale \\
+& y = a.y\_coord * scale \\
+\end{align*}
+$$
+
 ## `signed_angle` Method
 ```python
 vector.signed_angle(a: Vector2, b: Vector2)
@@ -120,6 +168,13 @@ vector.signed_angle(a: Vector2, b: Vector2)
     - `a`: Starting Vector2.
     - `b`: Ending Vector2.
 - *Returns:* The signed angle in degrees between the two vectors.
+
+$$
+\begin{align*}
+& angle = arctan2(b*a,a*b) \\
+& signed\_angle = angle
+\end{align*}
+$$
 
 ## `smooth_damp` Method
 ```python
@@ -134,11 +189,28 @@ vector.smooth_damp(a: Vector2, b: Vector2, c: Vector2, smooth_time: float, max_s
     - `delta_time`: Time since the last call.
 - *Returns:* A dynamically allocated array representing the smoothly interpolated position.
 
+$$
+\begin{align*}
+& difference = b - 1 \\
+& spring_force = difference * smooth_time * max_speed \\
+& damping_force = c * 2 * \sqrt{(smooth\_time)} * sprintf\_force \\
+& acceleration = (spring_force + damping_force) * delta_time \\
+& x = a.x\_coord + difference.x + acceleration.x \\
+& y = a.y\_coord + difference.y + acceleration.y
+\end{align*}
+$$
+
 ## `to_list` Method
 ```python
 vector.to_list()
 ```
 - *Returns:* A dynamically allocated array representing the vector.
+
+$$
+\begin{align*}
+& list = \left[ x, y \right]
+\end{align*}
+$$
 
 ## `sqrmagnitude` Method
 ```python
@@ -146,17 +218,37 @@ vector.sqrmagnitude
 ```
 - *Returns:* The squared magnitude of the vector.
 
+$$
+\begin{align*}
+& sqrmagnitude = x^{2}+y^{2}
+\end{align*}
+$$
+
 ## `magnitude` Method
 ```python
 vector.magnitude
 ```
 - *Returns:* The magnitude of the vector.
 
+$$
+\begin{align*}
+& magnitude = \sqrt{x^{2}+y^{2}}
+\end{align*}
+$$
+
 ## `normalized` Method
 ```python
 vector.normalized()
 ```
 - *Returns:* A dynamically allocated array representing the normalized vector.
+
+$$
+\begin{align*}
+& magnitude = \sqrt{x^{2}+y^{2}} \\
+& x = x/magnitude \\
+& y = y/magnitude
+\end{align*}
+$$
 
 ## `dot` Method
 ```python
@@ -167,6 +259,12 @@ vector.dot(a: Vector2, b: Vector2)
     - `b`: Second Vector2.
 - *Returns:* The dot product of the two vectors.
 
+$$
+\begin{align*}
+& dot = a.x\_coord*b.x\_coord+a.y\_coord*b.y\_coord
+\end{align*}
+$$
+
 ## `angle` Method
 ```python
 vector.angle(a: Vector2, b: Vector2)
@@ -175,6 +273,12 @@ vector.angle(a: Vector2, b: Vector2)
     - `a`: First Vector2.
     - `b`: Second Vector2.
 - *Returns:* The angle in radians between the two vectors.
+
+$$
+\begin{align*}
+& angle = arccos(\frac{a*b}{magnitude(a)*magnitude(b)})
+\end{align*}
+$$
 
 ## Getter methods
 ```python
