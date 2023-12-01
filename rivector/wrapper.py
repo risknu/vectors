@@ -182,7 +182,6 @@ class Vector2Wrapper(ctypes.Structure):
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `signed_angle` function, the arguments `b: Vector2Wrapper, a: Vector2Wrapper`, check your code')
         c_pointer = cpp_library.Vector2_signed_angle(self.object, b.object, a.object)
-        print(c_pointer)
         return c_pointer
     
     @property

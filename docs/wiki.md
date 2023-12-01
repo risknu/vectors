@@ -4,6 +4,13 @@ This Python library introduces a set of fast vector classes, designed for conven
 ## How it Works and Why It's Fast
 The core mathematical logic and vector class are entirely written in C++. They are then utilized through CPython in Python, transforming it into a wrapper class that can be fully utilized in Python. Speaking of its power, here are some speed-related details, including a comparison with the popular numpy library in mathematics:
 
+![figure 1](./figure_docs.png)
+
+```diff
++ Vector2Wrapper 0.8779744120547548
+- NumPy 1.6510654900339432
+```
+
 # Methods/Functions Documentation
 ## Constructor
 ```python
