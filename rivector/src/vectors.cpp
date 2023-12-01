@@ -20,15 +20,9 @@ bool Vector2::equals(Vector2& b) const {
 float* Vector2::clamp_magnitude(float max_length) const {
     float mag = magnitude();
     if (mag == 0) {
-        float* float_array = new float[2];
-        float_array[0] = 0;
-        float_array[1] = 0;
-        return float_array;
+        return new float[2]{0, 0};
     }
-    float* float_array = new float[2];
-    float_array[0] = x/mag*max_length;
-    float_array[1] = y/mag*max_length;
-    return float_array;
+    return new float[2]{x / mag * max_length, y / mag * max_length};
 }
 
 // Returns the distance between a and b
@@ -40,85 +34,61 @@ float Vector2::distance(Vector2& b) const {
 
 // Linearly interpolates between vectors a and b by t
 float* Vector2::lerp_unclamped(Vector2& a, Vector2& b, float t) const {
-    float* float_array = new float[2];
-    float_array[0] = a.x+(b.x-a.x)*t;
-    float_array[1] = a.y+(b.y-a.y)*t;
-    return float_array;
+    return new float[2]{a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t};
 }
 
 // Returns a vector that is made from the largest components of two vectors
 float* Vector2::max(Vector2& a, Vector2& b) const {
-    float* float_array = new float[2];
-    float_array[0] = std::max(a.x, b.x);
-    float_array[1] = std::max(a.y, b.y);
-    return float_array;
+    float* result = new float[2];
+    result[0] = (a.x > b.x) ? a.x : b.x;
+    result[1] = (a.y > b.y) ? a.y : b.y;
+    return result;
 }
 
 // Returns a vector that is made from the smallest components of two vector
 float* Vector2::min(Vector2& a, Vector2& b) const {
-    float* float_array = new float[2];
-    float_array[0] = std::min(a.x, b.x);
-    float_array[1] = std::min(a.y, b.y);
-    return float_array;
+    float* result = new float[2];
+    result[0] = (a.x < b.x) ? a.x : b.x;
+    result[1] = (a.y < b.y) ? a.y : b.y;
+    return result;
 }
 
 // Returns the 2D vector perpendicular to this 2D vector. The result is always rotated 90-degrees in a counter-clockwise direction for a 2D coordinate system where the positive Y axis goes up
 float* Vector2::perpendicular(Vector2& a) const {
-    float* float_array = new float[2];
-    float_array[0] = -a.y;
-    float_array[1] = a.x;
-    return float_array;
+    return new float[2]{-a.y, a.x};
 }
 
 // Moves a point current towards target
 float* Vector2::move_towards(Vector2& a, Vector2& b, float max_distance_delta) const {
-    float to_vector[2] = { b.x - a.x, b.y - a.y };
-    double x_degree = std::pow(to_vector[0], 2);
-    double y_degree = std::pow(to_vector[1], 2);
-    float distance = std::sqrt(static_cast<float>(x_degree + y_degree));
+    float to_vector[2] = {b.x - a.x, b.y - a.y};
+    float distance = std::hypot(to_vector[0], to_vector[1]);
 
     if (distance <= max_distance_delta || distance == 0) {
-        // If the distance is less than or equal to max_distance_delta, or distance is 0, return the target vector b
-        float* float_array = new float[2]{ b.x, b.y };
-        return float_array;
+        return new float[2]{b.x, b.y};
     }
 
-    // Move towards the target vector by at most max_distance_delta
-    float* float_array = new float[2]{ a.x + to_vector[0] / distance * max_distance_delta, a.y + to_vector[1] / distance * max_distance_delta };
-    return float_array;
+    return new float[2]{a.x + to_vector[0] / distance * max_distance_delta, a.y + to_vector[1] / distance * max_distance_delta};
 }
 
 // Reflects a vector off the vector defined by a normal
 float* Vector2::reflect(Vector2& a, Vector2& b) const {
     float dot = 2 * (a.x * b.x + a.y * b.y);
-    float* float_array = new float[2];
-    float_array[0] = a.x - dot * b.x;
-    float_array[1] = a.y - dot * b.y;
-    return float_array;
+    return new float[2]{a.x - dot * b.x, a.y - dot * b.y};
 }
 
 // Multiplies two vectors component-wise
 float* Vector2::scale(Vector2& a, float scale) const {
-    float* float_array = new float[2];
-    float_array[0] = a.x * scale;
-    float_array[1] = a.y * scale;
-    return float_array;
+    return new float[2]{a.x * scale, a.y * scale};
 }
 
 // Gets the signed angle in degrees between from and to
 float Vector2::signed_angle(Vector2& a, Vector2& b) const {
-    // Check for zero vectors
-        if (a.x == 0 && a.y == 0) return 0.0f;
-        if (b.x == 0 && b.y == 0) return 0.0f;
+    if (a.x == 0 && a.y == 0) return 0.0f;
+    if (b.x == 0 && b.y == 0) return 0.0f;
 
-        // Calculate angle
-        float angle = std::atan2(b.y, b.x) - std::atan2(a.y, a.x);
-
-        // Normalize angle to the range [-pi, pi]
-        angle = std::fmod((angle + M_PI), (2 * M_PI)) - M_PI;
-
-        // Convert to degrees
-        return angle * (180.0f / M_PI);
+    float angle = std::atan2(b.y, b.x) - std::atan2(a.y, a.x);
+    angle = std::fmod((angle + M_PI), (2 * M_PI)) - M_PI;
+    return angle * (180.0f / M_PI);
 }
 
 // Gets the signed angle in degrees between from and to
@@ -128,56 +98,33 @@ float* Vector2::smooth_damp(Vector2& a, Vector2& b, Vector2& c, float smooth_tim
     float x = omega * delta_time;
     float exp_x = 1.0f / (1.0f + std::exp(-x));
 
-    float* chnage = new float[2];
-    chnage[0] = b.x-a.x*omega;
-    chnage[1] = b.y-a.y*omega;
-
-    float* velocity = new float[2];
-    velocity[0] = c.x*exp_x;
-    velocity[1] = c.y*exp_x;
-
-    float* result = new float[2];
-    result[0] = a.x+velocity[0]+chnage[0]*(1.0f-exp_x);
-    result[1] = a.y+velocity[1]+chnage[1]*(1.0f-exp_x);
-    return result;
+    float change[2] = {b.x - a.x * omega, b.y - a.y * omega};
+    float velocity[2] = {c.x * exp_x, c.y * exp_x};
+    return new float[2]{a.x + velocity[0] + change[0] * (1.0f - exp_x), a.y + velocity[1] + change[1] * (1.0f - exp_x)};
 }
 
 // Returns a dynamically allocated array representing the vector [x, y]
 float* Vector2::to_list() const {
-    float* float_array = new float[2];
-    float_array[0] = x;
-    float_array[1] = y;
-    return float_array;
+    return new float[2]{x, y};
 }
 
 // Calculates the sqr magnitude (length) of the vector
 float Vector2::sqrmagnitude() const {
-    double x_degree = std::pow(x, 2);
-    double y_degree = std::pow(y, 2);
-    float result_sqr = static_cast<float>(x_degree + y_degree);
-    return result_sqr;
+    return x * x + y * y;
 }
 
 // Calculates the magnitude (length) of the vector
 float Vector2::magnitude() const {
-    double x_degree = std::pow(x, 2);
-    double y_degree = std::pow(y, 2);
-    float result_sqrt = std::sqrt(static_cast<float>(x_degree + y_degree));
-    return result_sqrt;
+    return std::hypot(x, y);
 }
 
 // Returns a dynamically allocated array representing the normalized vector
 float* Vector2::normalized() const {
-    float* float_array = new float[2];
     float mag = magnitude();
     if (mag == 0) {
-        float_array[0] = 0;
-        float_array[1] = 0;
-        return float_array;
+        return new float[2]{0, 0};
     }
-    float_array[0] = x / mag;
-    float_array[1] = y / mag;
-    return float_array;
+    return new float[2]{x / mag, y / mag};
 }
 
 // Calculates the dot product between two Vector2 objects a and b

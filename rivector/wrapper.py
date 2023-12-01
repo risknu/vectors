@@ -1,9 +1,7 @@
 from __future__ import annotations
-
-from rivector.errors import MethodArgumentationError
-
-from typing import Union, Any
+from typing import Union
 import ctypes
+from rivector.errors import MethodArgumentationError
 
 cpp_library = ctypes.CDLL('rivector/lib/vectors.so')
 
@@ -53,6 +51,13 @@ cpp_library.Vector2_signed_angle.restype = ctypes.c_float
 
 cpp_library.Vector2_smooth_damp.restype = ctypes.POINTER(ctypes.c_float * 2)
 
+# Combine common patterns in methods
+def common_method_pattern(self, function_name, *args):
+    if any(arg is None for arg in args):
+        raise MethodArgumentationError(
+            f'It looks like you did not specify the arguments in the `{function_name}` function, the arguments `{args}`, check your code')
+    result_pointer = getattr(cpp_library, function_name)(*args)
+    return result_pointer
 
 class Vector2Wrapper(ctypes.Structure):
     _fields_ = [("x", ctypes.c_float), ("y", ctypes.c_float)]
@@ -217,113 +222,63 @@ class Vector2Wrapper(ctypes.Structure):
     @property
     def right(self) -> Vector2Wrapper:
         return Vector2Wrapper(1, 0)
-    
+
     def __add__(self, a: Union[Vector2Wrapper, float, int]) -> Vector2Wrapper:
-        if isinstance(a, (int, float)):
-            self.set(self.x_coord+a, self.y_coord+a)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        elif isinstance(a, Vector2Wrapper):
-            self.set(self.x_coord+a.x_coord, self.y_coord+a.y_coord)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        
+        a = a if isinstance(a, Vector2Wrapper) else Vector2Wrapper(a, a)
+        self.set(self.x_coord + a.x_coord, self.y_coord + a.y_coord)
+        return Vector2Wrapper(self.x_coord, self.y_coord)
+
     def __contains__(self, a: Union[int, float]) -> bool:
-        if a == self.x_coord:
-            return True
-        elif a == self.y_coord:
-            return True
-        return False
-    
+        return a == self.x_coord or a == self.y_coord
+
     def __truediv__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
         if isinstance(a, (int, float)):
             if a == 0:
                 raise ZeroDivisionError('zero division error')
-            self.set(self.x_coord/a, self.y_coord/a)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
+            self.set(self.x_coord / a, self.y_coord / a)
         elif isinstance(a, Vector2Wrapper):
-            self.set(self.x_coord/a.x_coord, self.y_coord/a.y_coord)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        
+            self.set(self.x_coord / a.x_coord, self.y_coord / a.y_coord)
+        return Vector2Wrapper(self.x_coord, self.y_coord)
+
     def __mul__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
         if isinstance(a, (int, float)):
-            self.set(self.x_coord*a, self.y_coord*a)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
+            self.set(self.x_coord * a, self.y_coord * a)
         elif isinstance(a, Vector2Wrapper):
-            self.set(self.x_coord*a.x_coord, self.y_coord*a.y_coord)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        
+            self.set(self.x_coord * a.x_coord, self.y_coord * a.y_coord)
+        return Vector2Wrapper(self.x_coord, self.y_coord)
+
     def __neg__(self) -> Vector2Wrapper:
         return Vector2Wrapper(-self.x_coord, -self.y_coord)
 
     def __sub__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (int, float)):
-            self.set(self.x_coord-a, self.y_coord-a)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        elif isinstance(a, Vector2Wrapper):
-            self.set(self.x_coord-a.x_coord, self.y_coord-a.y_coord)
-            return Vector2Wrapper(self.x_coord, self.y_coord)
-        
-    def __lt__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a < self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord < self.x_coord and a.y_coord < self.y_coord:
-                return True
-            return False
-        
-    def __gt__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a > self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord > self.x_coord and a.y_coord > self.y_coord:
-                return True
-            return False
-        
-    def __ge__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a >= self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord >= self.x_coord and a.y_coord >= self.y_coord:
-                return True
-            return False
-        
-    def __le__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a <= self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord <= self.x_coord and a.y_coord <= self.y_coord:
-                return True
-            return False
-        
-    def __eq__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a == self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord == self.x_coord and a.y_coord == self.y_coord:
-                return True
-            return False
-        
-    def __ne__(self, a: Union[int, float, Vector2Wrapper]) -> Vector2Wrapper:
-        if isinstance(a, (float, int)):
-            if a != self.x_coord+self.y_coord:
-                return True
-            return False
-        elif isinstance(a, Vector2Wrapper):
-            if a.x_coord != self.x_coord and a.y_coord != self.y_coord:
-                return True
-            return False
+        a = a if isinstance(a, Vector2Wrapper) else Vector2Wrapper(a, a)
+        self.set(self.x_coord - a.x_coord, self.y_coord - a.y_coord)
+        return Vector2Wrapper(self.x_coord, self.y_coord)
+
+    def __lt__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a < (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord < self.x_coord and a.y_coord < self.y_coord
+
+    def __gt__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a > (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord > self.x_coord and a.y_coord > self.y_coord
+
+    def __ge__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a >= (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord >= self.x_coord and a.y_coord >= self.y_coord
+
+    def __le__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a <= (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord <= self.x_coord and a.y_coord <= self.y_coord
+
+    def __eq__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a == (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord == self.x_coord and a.y_coord == self.y_coord
+
+    def __ne__(self, a: Union[int, float, Vector2Wrapper]) -> bool:
+        return a != (self.x_coord + self.y_coord) if isinstance(a, (float, int)) else a.x_coord != self.x_coord or a.y_coord != self.y_coord
 
     def __repr__(self) -> str:
         return f'<Vector2 ({self.x_coord}, {self.y_coord})>'
 
     def __del__(self) -> None:
         cpp_library.Vector2_free(self.object)
+
+    @staticmethod
+    def get_object(obj: Vector2Wrapper) -> ctypes.c_void_p:
+        return obj.object if obj is not None else None
