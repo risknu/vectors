@@ -124,11 +124,12 @@ class Vector2Wrapper(ctypes.Structure):
         c_pointer = cpp_library.Vector2_distance(self.object, b.object)
         return c_pointer
     
+    @classmethod
     def lerp_unclamped(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, t: float = 0.0) -> Vector2Wrapper:
         if a is None or b is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `lerp_unclamped` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_lerp_unclamped(self.object, a.object, b.object, ctypes.c_float(t))
+        c_float_array_pointer = cpp_library.Vector2_lerp_unclamped(a.object, a.object, b.object, ctypes.c_float(t))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
@@ -158,27 +159,30 @@ class Vector2Wrapper(ctypes.Structure):
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
+    @classmethod
     def move_towards(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None, max_distance_delta: float = 0.0) -> Vector2Wrapper:
         if a is None or b is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `move_towards` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_move_towards(self.object, a.object, b.object, ctypes.c_float(max_distance_delta))
+        c_float_array_pointer = cpp_library.Vector2_move_towards(a.object, a.object, b.object, ctypes.c_float(max_distance_delta))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
 
+    @classmethod
     def reflect(self, a: Vector2Wrapper = None, b: Vector2Wrapper = None) -> Vector2Wrapper:
         if a is None or b is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `reflect` function, the arguments `a: Vector2Wrapper, b: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_reflect(self.object, a.object, b.object)
+        c_float_array_pointer = cpp_library.Vector2_reflect(a.object, a.object, b.object)
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
+    @classmethod
     def scale(self, a: Vector2Wrapper = None, scale: float = 0.0) -> Vector2Wrapper:
         if a is None:
             raise MethodArgumentationError(
                 'It looks like you did not specify the arguments in the `scale` function, the arguments `a: Vector2Wrapper`, check your code')
-        c_float_array_pointer = cpp_library.Vector2_scale(self.object, a.object, ctypes.c_float(scale))
+        c_float_array_pointer = cpp_library.Vector2_scale(a.object, a.object, ctypes.c_float(scale))
         float_array = list(c_float_array_pointer.contents)
         return Vector2Wrapper(float_array[0], float_array[1])
     
