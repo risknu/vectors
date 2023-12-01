@@ -1,7 +1,7 @@
 # rivector - risknu vectors
 This Python library introduces a set of fast vector classes, designed for convenient and rapid vector operations, similar to those in Unity. It is well-suited for game development using Pygame and also useful for general mathematical applications. The library is open source and available on GitHub.
 
-> ![NOTE]
+> [!NOTE]
 > It's worth noting that while you can add your own methods to the module, the library may not be as stable as other vector libraries. Please exercise caution and consider testing thoroughly, especially when compared to more established alternatives.
 
 ## How it Works and Why It's Fast
@@ -38,7 +38,7 @@ print(vector + vector)  # Vector(20, 20)
 # Other operations...
 ```
 
-> ![NOTE]
+> [!NOTE]
 > The library allows you to create and manipulate 2D vectors easily. You can find more details and methods in the [wiki](https://github.com/risknu/rivector/wiki) or in [official website](https://risknu.github.io/rivector). 
 
 Feel free to contribute and enhance the functionality of the library as needed.
