@@ -20,9 +20,15 @@ bool Vector2::equals(Vector2& b) const {
 float* Vector2::clamp_magnitude(float max_length) const {
     float mag = magnitude();
     if (mag == 0) {
-        return new float[2]{0, 0};
+        float* result = new float[2];
+        result[0] = 0;
+        result[1] = 0;
+        return result;
     }
-    return new float[2]{x / mag * max_length, y / mag * max_length};
+    float* result = new float[2];
+    result[0] = x / mag * max_length;
+    result[1] = y / mag * max_length;
+    return result;
 }
 
 // Returns the distance between a and b
@@ -34,7 +40,10 @@ float Vector2::distance(Vector2& b) const {
 
 // Linearly interpolates between vectors a and b by t
 float* Vector2::lerp_unclamped(Vector2& a, Vector2& b, float t) const {
-    return new float[2]{a.x + (b.x - a.x) * t, a.y + (b.y - a.y) * t};
+    float* result = new float[2];
+    result[0] = a.x + (b.x - a.x) * t;
+    result[1] = a.y + (b.y - a.y) * t;
+    return result;
 }
 
 // Returns a vector that is made from the largest components of two vectors
@@ -55,7 +64,10 @@ float* Vector2::min(Vector2& a, Vector2& b) const {
 
 // Returns the 2D vector perpendicular to this 2D vector. The result is always rotated 90-degrees in a counter-clockwise direction for a 2D coordinate system where the positive Y axis goes up
 float* Vector2::perpendicular(Vector2& a) const {
-    return new float[2]{-a.y, a.x};
+    float* result = new float[2];
+    result[0] = -a.y;
+    result[1] = a.x;
+    return result;
 }
 
 // Moves a point current towards target
@@ -64,21 +76,33 @@ float* Vector2::move_towards(Vector2& a, Vector2& b, float max_distance_delta) c
     float distance = std::hypot(to_vector[0], to_vector[1]);
 
     if (distance <= max_distance_delta || distance == 0) {
-        return new float[2]{b.x, b.y};
+        float* result = new float[2];
+        result[0] = b.x;
+        result[1] = b.y;
+        return result;
     }
 
-    return new float[2]{a.x + to_vector[0] / distance * max_distance_delta, a.y + to_vector[1] / distance * max_distance_delta};
+    float* result = new float[2];
+    result[0] = a.x + to_vector[0] / distance * max_distance_delta;
+    result[1] = a.y + to_vector[1] / distance * max_distance_delta;
+    return result;
 }
 
 // Reflects a vector off the vector defined by a normal
 float* Vector2::reflect(Vector2& a, Vector2& b) const {
     float dot = 2 * (a.x * b.x + a.y * b.y);
-    return new float[2]{a.x - dot * b.x, a.y - dot * b.y};
+    float* result = new float[2];
+    result[0] = a.x - dot * b.x;
+    result[1] = a.y - dot * b.y;
+    return result;
 }
 
 // Multiplies two vectors component-wise
 float* Vector2::scale(Vector2& a, float scale) const {
-    return new float[2]{a.x * scale, a.y * scale};
+    float* result = new float[2];
+    result[0] = a.x * scale;
+    result[1] = a.y * scale;
+    return result;
 }
 
 // Gets the signed angle in degrees between from and to
@@ -100,12 +124,19 @@ float* Vector2::smooth_damp(Vector2& a, Vector2& b, Vector2& c, float smooth_tim
 
     float change[2] = {b.x - a.x * omega, b.y - a.y * omega};
     float velocity[2] = {c.x * exp_x, c.y * exp_x};
-    return new float[2]{a.x + velocity[0] + change[0] * (1.0f - exp_x), a.y + velocity[1] + change[1] * (1.0f - exp_x)};
+
+    float* result = new float[2];
+    result[0] = a.x + velocity[0] + change[0] * (1.0f - exp_x);
+    result[1] = a.y + velocity[1] + change[1] * (1.0f - exp_x);
+    return result;
 }
 
 // Returns a dynamically allocated array representing the vector [x, y]
 float* Vector2::to_list() const {
-    return new float[2]{x, y};
+    float* result = new float[2];
+    result[0] = x;
+    result[1] = y;
+    return result;
 }
 
 // Calculates the sqr magnitude (length) of the vector
@@ -122,9 +153,15 @@ float Vector2::magnitude() const {
 float* Vector2::normalized() const {
     float mag = magnitude();
     if (mag == 0) {
-        return new float[2]{0, 0};
+        float* result = new float[2];
+        result[0] = 0;
+        result[1] = 0;
+        return result;
     }
-    return new float[2]{x / mag, y / mag};
+    float* result = new float[2];
+    result[0] = x / mag;
+    result[1] = y / mag;
+    return result;
 }
 
 // Calculates the dot product between two Vector2 objects a and b
