@@ -1,8 +1,14 @@
 from __future__ import annotations
+
 from typing import Union
 import ctypes
+import os, sys
+
 from rivector.errors import MethodArgumentationError
 
+if not os.path.exists('rivector/lib/vectors.so'):
+    sys.exit(1)
+    
 cpp_library = ctypes.CDLL('rivector/lib/vectors.so')
 
 cpp_library.Vector2_new.argtypes = [ctypes.c_float, ctypes.c_float]
